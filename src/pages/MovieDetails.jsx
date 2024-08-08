@@ -13,6 +13,7 @@ function MovieDetail() {
     fetch(`${import.meta.env.VITE_API_URL}/movies/getMovie/${movieId}`)
       .then(response => response.json())
       .then(data => {
+        console.log("Fetched data:", data);
         if (typeof(data) === "object") {
           setMovie(data.movie);
         } else {
@@ -28,31 +29,33 @@ function MovieDetail() {
   if (error) {
     return <Container><p>{error}</p></Container>;
   }
-  console.log("Movie: ", movie)
   return (
     <Container>
-        <Button
-            onClick={() => navigate(-1)}
-            variant="outline-secondary"
-            size="sm"
-            className='mt-3'
-          >
-            Back
-          </Button>
-        {movie ? (
-            <Card className='mt-3'>
-            <Card.Body className='my-3'>
-                <h1>{movie.title} | {movie.year}</h1>
-                <h4>{movie.director}</h4>
-                <Card.Text>{movie.description}</Card.Text>
-                <Card.Text>Genre: {movie.genre}</Card.Text>
-            </Card.Body>
-            </Card>
-        ) : (
-            <p>Loading...</p>
-        )}
+      <Button
+        onClick={() => navigate(-1)}
+        variant="outline-secondary"
+        size="sm"
+        className='mt-3'
+      >
+        Back
+      </Button>
+      {movie ? (
+        <Card className='mt-3'>
+          <Card.Body className='my-3'>
+            <h1>{movie.title} | {movie.year}</h1>
+            <h4>{movie.director}</h4>
+            <Card.Text>{movie.description}</Card.Text>
+            <Card.Text>Genre: {movie.genre}</Card.Text>
+          </Card.Body>
+        </Card>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <p>Loading...</p>
+      )}
     </Container>
   );
+  
 }
 
 export default MovieDetail;
