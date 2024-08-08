@@ -59,7 +59,7 @@ const MovieList = () => {
 
   useEffect(() => {
     if (currentMovie && currentMovie._id) {
-        fetch(`${import.meta.env.VITE_API_URL}/movies/getMovieComments/${currentMovie._id}`, {
+        fetch(`${import.meta.env.VITE_API_URL}/movies/getComments/${currentMovie._id}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -247,7 +247,7 @@ const MovieList = () => {
       return;
     }
   
-    fetch(`${import.meta.env.VITE_API_URL}/movies/addMovieComment/${currentMovie._id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/movies/addComment/${currentMovie._id}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -366,11 +366,8 @@ const MovieList = () => {
                     movie.comments.map(comment => (
                         <Card key={comment._id} className="my-2">
                             <Card.Body>
-                                <p>
-                                    Commented on: {new Date(comment.createdAt).toLocaleDateString()} at {new Date(comment.createdAt).toLocaleTimeString()}
-                                </p>
 
-                                <Card.Text className='ms-3'>{comment.content}</Card.Text>
+                                <Card.Text className='ms-3'>Comment: {comment.content}</Card.Text>
                             </Card.Body>
                         </Card>
                     ))
