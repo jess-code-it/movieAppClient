@@ -1,0 +1,40 @@
+/* src/components/Home.css */
+.home-container {
+    background-color: #f8f9fa;
+    padding: 40px 0;
+  }
+  
+  .home-card {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .home-card img {
+    border-bottom: 2px solid #e9ecef;
+  }
+  
+  .home-card .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .home-card .card-text {
+    font-size: 1rem;
+  }
+  
+  .display-3 {
+    font-size: 3rem;
+  }
+  
+  .lead {
+    font-size: 1.25rem;
+  }
+  
+  .text-primary {
+    color: #007bff !important;
+  }
+  
+  .text-muted {
+    color: #6c757d !important;
+  }
+  
