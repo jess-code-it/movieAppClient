@@ -14,8 +14,8 @@ function MovieDetail() {
       .then(response => response.json())
       .then(data => {
         console.log("Fetched data:", data);
-        if (typeof(data) === "object") {
-          setMovie(data.movie);
+        if (data && data._id) {
+          setMovie(data);
         } else {
           setError('Movie not found.');
         }
@@ -25,7 +25,7 @@ function MovieDetail() {
         console.error('Error fetching movie details:', error);
       });
   }, [movieId]);
-
+  
   if (error) {
     return <Container><p>{error}</p></Container>;
   }
@@ -39,7 +39,9 @@ function MovieDetail() {
       >
         Back
       </Button>
-      {movie ? (
+      {error ? (
+        <p>{error}</p>
+      ) : movie ? (
         <Card className='mt-3'>
           <Card.Body className='my-3'>
             <h1>{movie.title} | {movie.year}</h1>
@@ -48,8 +50,6 @@ function MovieDetail() {
             <Card.Text>Genre: {movie.genre}</Card.Text>
           </Card.Body>
         </Card>
-      ) : error ? (
-        <p>{error}</p>
       ) : (
         <p>Loading...</p>
       )}
