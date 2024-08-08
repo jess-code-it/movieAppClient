@@ -135,7 +135,6 @@ const MovieList = () => {
           title: "An error occurred while adding the movie.",
           icon: "warning",
         });
-        console.error('Error adding movie:', error);
       });
   };
 
@@ -308,12 +307,12 @@ const MovieList = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        console.log("getMovie:",data);
         if (data.movie) {
             setCurrentMovie(data.movie);
             navigate(`/movies/getMovie/${movieId}`);
         } else {
-            console.log(data.movie);
+            console.log("getMovie error:",data);
             setError('Failed to fetch movie details.');
         }
     })
