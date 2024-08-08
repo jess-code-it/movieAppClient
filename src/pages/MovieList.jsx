@@ -313,6 +313,7 @@ const MovieList = () => {
             setCurrentMovie(data.movie);
             navigate(`/movies/getMovie/${movieId}`);
         } else {
+            console.log(data.movie);
             setError('Failed to fetch movie details.');
         }
     })
