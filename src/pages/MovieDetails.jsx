@@ -28,7 +28,7 @@ function MovieDetail() {
   if (error) {
     return <Container><p>{error}</p></Container>;
   }
-
+  console.log("Movie: ", movie)
   return (
     <Container>
         <Button
@@ -46,7 +46,6 @@ function MovieDetail() {
                 <h4>{movie.director}</h4>
                 <Card.Text>{movie.description}</Card.Text>
                 <Card.Text>Genre: {movie.genre}</Card.Text>
-                {/* Add more movie details here */}
             </Card.Body>
             </Card>
         ) : (
