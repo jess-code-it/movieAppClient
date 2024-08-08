@@ -311,7 +311,8 @@ const MovieList = () => {
         if (data.movie) {
             setCurrentMovie(data.movie);
         } else {
-            console.log("getMovie error:", data);
+            console.log("getMovie error:", data.movie);
+            console.log("getMovie error:", typeof(data.movie))
             setError('Failed to fetch movie details.');
         }
     })
