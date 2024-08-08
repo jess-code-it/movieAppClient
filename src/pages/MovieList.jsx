@@ -110,6 +110,7 @@ const MovieList = () => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         if (data.result) {
           setMovies([...movies, data.result]);
           setTitle('');
@@ -298,7 +299,7 @@ const MovieList = () => {
   };
 
   const handleViewMovie = (movieId) => {
-    fetch(`${import.meta.env.VITE_API_URL}/movies/getMovieById/${movieId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/movies/getMovie/${movieId}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -367,7 +368,7 @@ const MovieList = () => {
                         <Card key={comment._id} className="my-2">
                             <Card.Body>
 
-                                <Card.Text className='ms-3'>Comment: {comment.content}</Card.Text>
+                                <Card.Text className='ms-3'>Comment: {comment.comment}</Card.Text>
                             </Card.Body>
                         </Card>
                     ))
