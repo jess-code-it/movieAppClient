@@ -307,12 +307,11 @@ const MovieList = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log("getMovie:",data);
+        console.log("getMovie:", data);
         if (data.movie) {
             setCurrentMovie(data.movie);
-            navigate(`/movies/getMovie/${movieId}`);
         } else {
-            console.log("getMovie error:",data);
+            console.log("getMovie error:", data);
             setError('Failed to fetch movie details.');
         }
     })
@@ -321,6 +320,12 @@ const MovieList = () => {
         console.error('Error fetching movie details:', error);
     });
 };
+
+useEffect(() => {
+    if (currentMovie) {
+        navigate(`/movies/getMovie/${currentMovie._id}`);
+    }
+}, [currentMovie, navigate]);
 
 
   return (
