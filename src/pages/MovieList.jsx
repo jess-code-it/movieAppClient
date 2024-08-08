@@ -308,11 +308,9 @@ const MovieList = () => {
     .then(response => response.json())
     .then(data => {
         console.log("getMovie:", data);
-        if (data.movie) {
+        if (typeof(data) === "object") {
             setCurrentMovie(data.movie);
         } else {
-            console.log("getMovie error:", data.movie);
-            console.log("getMovie type of:", typeof(data));
             setError('Failed to fetch movie details.');
         }
     })
