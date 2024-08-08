@@ -308,6 +308,7 @@ const MovieList = () => {
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         if (data.movie) {
             setCurrentMovie(data.movie);
             navigate(`/movies/getMovie/${movieId}`);

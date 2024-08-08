@@ -10,7 +10,7 @@ function MovieDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/movies/getMovieById/${movieId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/movies/getMovie/${movieId}`)
       .then(response => response.json())
       .then(data => {
         if (data.status ===200) {
