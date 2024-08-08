@@ -13,7 +13,7 @@ function MovieDetail() {
     fetch(`${import.meta.env.VITE_API_URL}/movies/getMovie/${movieId}`)
       .then(response => response.json())
       .then(data => {
-        if (data.status ===200) {
+        if (data.movie && Object.keys(data.movie).length > 0) {
             console.log(data);
           setMovie(data.movie);
         } else {
