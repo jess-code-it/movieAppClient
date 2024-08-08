@@ -310,7 +310,7 @@ const MovieList = () => {
     .then(data => {
         if (data.movie) {
             setCurrentMovie(data.movie);
-            navigate(`/movies/${movieId}`);
+            navigate(`/movies/getMovie/${movieId}`);
         } else {
             setError('Failed to fetch movie details.');
         }
