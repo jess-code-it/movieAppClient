@@ -35,7 +35,7 @@ const MovieList = () => {
         console.log(decodeToken);
     }
     // Fetch movie data
-    fetch(`${import.meta.env.VITE_API_URL}/movies/getAllMovies`, {
+    fetch(`${import.meta.env.VITE_API_URL}/movies/getMovies`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
