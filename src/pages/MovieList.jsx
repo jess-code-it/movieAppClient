@@ -327,9 +327,8 @@ const MovieList = () => {
       <Button variant="link" onClick={handleLogout} className="mb-3 float-end">
         Logout
       </Button>
-
-      {error && <Alert variant="danger">{error}</Alert>}
       <h1>Movie List</h1>
+      {error && <Alert variant="danger">{error}</Alert>}
       {currentUser && currentUser.isAdmin && (
         <Button variant="primary" onClick={() => setShowAddModal(true)}>Add Movie</Button>
       )}
