@@ -13,12 +13,10 @@ function MovieDetail() {
     fetch(`${import.meta.env.VITE_API_URL}/movies/getMovie/${movieId}`)
       .then(response => response.json())
       .then(data => {
-        if (data.movie && Object.keys(data.movie).length > 0) {
-            console.log(data);
+        if (typeof(data) === "object") {
           setMovie(data.movie);
         } else {
           setError('Movie not found.');
-          console.log(data);
         }
       })
       .catch(error => {
