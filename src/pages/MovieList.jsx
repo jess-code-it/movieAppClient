@@ -249,7 +249,7 @@ const MovieList = () => {
     }
   
     fetch(`${import.meta.env.VITE_API_URL}/movies/addComment/${currentMovie._id}`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
