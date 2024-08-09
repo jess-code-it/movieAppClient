@@ -381,18 +381,27 @@ const MovieList = () => {
                     </Card>
                 )}
                 {currentUser && (
-                    <Form onSubmit={(e) => {
-                        e.preventDefault();
-                        setCurrentMovie(movie);
-                        handleAddComment();
-                    }}>
-                    <Form.Group controlId="commentInput">
-                    <Form.Control type="text" placeholder="Add a comment" value={comment} onChange={e => setComment(e.target.value)} />
-                    </Form.Group>
-                    <Button variant="primary" type="submit" className="my-2">Add Comment</Button>
-                </Form>
+                  <>
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Add a comment"
+                    />
+                    <Button
+                        variant="outline-primary"
+                        onClick={() => {
+                            setCurrentMovie(movie);
+                            handleAddComment();
+                        }}
+                        className="mt-2"
+                    >
+                        Add Comment
+                    </Button>
+                  </>
                 )}
-</div>
+              </div>
             </Collapse>
           </Card.Body>
         </Card>
