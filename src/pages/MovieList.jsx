@@ -258,6 +258,7 @@ const MovieList = () => {
     })
     .then(response => response.json())
     .then(data => {
+      console.log("Comment: ", data)
       if (data.comment) {
         const updatedMovies = movies.map(movie =>
           movie._id === currentMovie._id
