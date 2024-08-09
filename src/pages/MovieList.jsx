@@ -259,7 +259,7 @@ const MovieList = () => {
     .then(response => response.json())
     .then(data => {
       console.log("Comment: ", data)
-      if (data.comment) {
+      if (Object.keys(data).length > 0) {
         const updatedMovies = movies.map(movie =>
           movie._id === currentMovie._id
             ? {
