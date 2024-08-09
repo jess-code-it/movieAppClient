@@ -44,6 +44,8 @@ const MovieDetail = () => {
           setMovie(data.updatedMovie);
           setComment('');
         } else {
+          console.log("Data:",data);
+          console.log("Error",data.error);
           setError(data.message || 'Failed to add comment');
         }
       })

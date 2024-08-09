@@ -52,7 +52,7 @@ const AdminDashboard = () => {
       .then(response => response.json())
       .then(data => {
         console.log(data)
-        if (data.result) {
+        if (Object.keys(data).length > 0) {
           setMovies([...movies, data.newMovie]);
           setNewMovie({ title: '', director: '', year: '', description: '', genre: '' });
           setShowAddModal(false);
