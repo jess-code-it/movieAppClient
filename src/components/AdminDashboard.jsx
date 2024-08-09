@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Form, ListGroup, Alert, Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 const AdminDashboard = () => {
   const [movies, setMovies] = useState([]);
@@ -236,7 +237,7 @@ const AdminDashboard = () => {
     movies.map(movie => (
       movie ? (
         <ListGroup.Item key={movie._id}>
-          <h5>{movie.title || 'No Title'}</h5>
+          <h5><Link to={`/movies/${movie._id}`}>{movie.title || 'No Title'}</Link></h5>
           <p><strong>Director:</strong> {movie.director || 'Unknown'}</p>
           <p><strong>Year:</strong> {movie.year || 'N/A'}</p>
           <p><strong>Description:</strong> {movie.description || 'No Description'}</p>
@@ -261,34 +262,6 @@ const AdminDashboard = () => {
           >
             Update
           </Button>
-          {/* Comments Section */}
-          <h4 className="mt-3">Comments</h4>
-          <Form.Group controlId={`formNewComment-${movie._id}`}>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Add a comment"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <Button 
-              variant="primary" 
-              onClick={() => handleAddComment(movie._id)} 
-              className="mt-2"
-            >
-              Add Comment
-            </Button>
-          </Form.Group>
-          <ListGroup>
-            {(movie.comments || []).map(comment => (
-              comment ? (
-                <ListGroup.Item key={comment._id}>
-                  <p>{new Date(comment.createdAt).toLocaleString()}</p>
-                  <p>{comment.comment || 'No Content'}</p>
-                </ListGroup.Item>
-              ) : null
-            ))}
-          </ListGroup>
         </ListGroup.Item>
       ) : (
         <ListGroup.Item key={`placeholder-${Math.random()}`}>
