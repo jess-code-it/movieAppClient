@@ -145,7 +145,7 @@ const AdminDashboard = () => {
       .then(response => response.json())
       .then(data => {
         console.log(data);
-        if (data.comment) {
+        if (Object.keys(data).length > 0) {
           setMovies(movies.map(movie => 
             movie._id === movieId 
             ? { ...movie, comments: [...movie.comments, data.comment] }

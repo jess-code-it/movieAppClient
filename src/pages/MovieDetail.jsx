@@ -69,7 +69,6 @@ const MovieDetail = () => {
           <ListGroup>
             {movie.comments.map((c, index) => (
               <ListGroup.Item key={index}>
-                <p>{new Date(c.createdAt).toLocaleString()}</p>
                 <p>{c.comment}</p>
               </ListGroup.Item>
             ))}
