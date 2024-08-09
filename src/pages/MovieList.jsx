@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Card, Button, Form, Alert, Modal, Collapse } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -32,8 +32,8 @@ const MovieList = () => {
     } else {
         const decodeToken = jwtDecode(token);
         setCurrentUser(decodeToken);
+        console.log(decodeToken);
     }
-
     // Fetch movie data
     fetch(`${import.meta.env.VITE_API_URL}/movies/getMovies`, {
       method: 'GET',
@@ -59,30 +59,31 @@ const MovieList = () => {
 
   useEffect(() => {
     if (currentMovie && currentMovie._id) {
-      fetch(`${import.meta.env.VITE_API_URL}/movies/getComments/${currentMovie._id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'Content-Type': 'application/json',
-        },
-      })
+        fetch(`${import.meta.env.VITE_API_URL}/movies/getComments/${currentMovie._id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         .then(response => response.json())
         .then(data => {
-          if (data.comments) {
-            setCurrentMovie(prevMovie => ({
-              ...prevMovie,
-              comments: data.comments
-            }));
-          } else {
-            setError('Failed to fetch comments.');
-          }
+            if (data.comments) {
+                setCurrentMovie(prevMovie => ({
+                    ...prevMovie,
+                    comments: data.comments
+                }));
+            } else {
+                setError('Failed to fetch comments.');
+            }
         })
         .catch(error => {
-          setError('An error occurred while fetching comments.');
-          console.error('Error fetching comments:', error);
+            setError('An error occurred while fetching comments.');
+            console.error('Error fetching comments:', error);
         });
     }
-  }, [currentMovie]);
+}, [currentMovie]);
+
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -109,6 +110,7 @@ const MovieList = () => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         if (data.result) {
           setMovies([...movies, data.result]);
           setTitle('');
@@ -237,7 +239,7 @@ const MovieList = () => {
       navigate('/login');
       return;
     }
-  
+    console.log(currentMovie);
     if (!currentMovie || !currentMovie._id) {
       Swal.fire({
         title: "No movie selected.",
@@ -306,6 +308,7 @@ const MovieList = () => {
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         if (typeof(data)==="object") {
             setCurrentMovie(data.movie);
             navigate(`/movies/getMovie/${movieId}`);
@@ -318,144 +321,114 @@ const MovieList = () => {
         console.error('Error fetching movie details:', error);
     });
 };
-  
+
+
   return (
     <Container>
+      <Button variant="link" onClick={handleLogout} className="mb-3 float-end">
+        Logout
+      </Button>
       <h1>Movie List</h1>
       {error && <Alert variant="danger">{error}</Alert>}
-      <Button variant="primary" onClick={() => setShowAddModal(true)}>Add Movie</Button>
-      <Button variant="secondary" onClick={handleLogout} className="ml-2">Logout</Button>
-      
+      {currentUser && currentUser.isAdmin && (
+        <Button variant="primary" onClick={() => setShowAddModal(true)}>Add Movie</Button>
+      )}
       {movies.map(movie => (
-        <Card key={movie._id} className="mb-3">
+        <Card key={movie._id} className="my-3">
           <Card.Body>
             <Card.Title>{movie.title}</Card.Title>
-            <Card.Text>
-              Director: {movie.director}<br />
-              Year: {movie.year}<br />
-              Genre: {movie.genre}
-            </Card.Text>
-            <Button variant="info" onClick={() => {
-              setCurrentMovie(movie);
-              setTitle(movie.title);
-              setDirector(movie.director);
-              setYear(movie.year);
-              setDescription(movie.description);
-              setGenre(movie.genre);
-              setShowUpdateModal(true);
-            }}>Update</Button>
-            <Button variant="danger" onClick={() => {
-              setCurrentMovie(movie);
-              setShowDeleteModal(true);
-            }} className="ml-2">Delete</Button>
-            <Button 
-              variant="secondary" 
-              onClick={() => toggleShowComments(movie._id)} 
-              className="ml-2"
-            >
+            <Card.Subtitle className="mb-2 text-muted">{movie.director} ({movie.year})</Card.Subtitle>
+            <Card.Text>{movie.description}</Card.Text>
+            <Card.Text><strong>Genre:</strong> {movie.genre}</Card.Text>
+            <Button variant="info" onClick={() => handleViewMovie(movie._id)}>View Details</Button>
+            {currentUser && currentUser.isAdmin && (
+              <>
+                <Button variant="secondary" onClick={() => {
+                  setCurrentMovie(movie);
+                  setTitle(movie.title);
+                  setDirector(movie.director);
+                  setYear(movie.year);
+                  setDescription(movie.description);
+                  setGenre(movie.genre);
+                  setShowUpdateModal(true);
+                }}>Edit</Button>
+                <Button variant="danger" className="mx-2" onClick={() => {
+                  setCurrentMovie(movie);
+                  setShowDeleteModal(true);
+                }}>Delete</Button>
+              </>
+            )}
+            <Button onClick={() => toggleShowComments(movie._id)} aria-controls={`comments-${movie._id}`} aria-expanded={showComments[movie._id] || false}>
               {showComments[movie._id] ? 'Hide Comments' : 'Show Comments'}
             </Button>
-            <Button 
-              variant="secondary" 
-              onClick={() => handleViewMovie(movie._id)} 
-              className="ml-2"
-            >
-              View Details
-            </Button>
             <Collapse in={showComments[movie._id]}>
-              <div>
+            <div id={`comments-${movie._id}`}>
                 {movie.comments && movie.comments.length > 0 ? (
-                  movie.comments.map((comment, index) => (
-                    <Card key={index} className="mt-2">
-                      <Card.Body>
-                        <Card.Text>
-                          {comment.content}
-                        </Card.Text>
-                      </Card.Body>
-                    </Card>
-                  ))
+                    movie.comments.map(comment => (
+                        <Card key={comment._id} className="my-2">
+                            <Card.Body>
+
+                                <Card.Text className='ms-3'>Comment: {comment.comment}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    ))
                 ) : (
-                  <Card className="mt-2">
-                    <Card.Body>
-                      <Card.Text>No comments found.</Card.Text>
-                    </Card.Body>
-                  </Card>
+                    <Card className="my-2">
+                        <Card.Body>
+                            <Card.Text>No comments found.</Card.Text>
+                        </Card.Body>
+                    </Card>
                 )}
-                <Form>
-                  <Form.Group>
-                    <Form.Label>Add Comment</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={2}
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Button variant="primary" onClick={handleAddComment}>Add Comment</Button>
+                {currentUser && (
+                    <Form onSubmit={(e) => {
+                        e.preventDefault();
+                        setCurrentMovie(movie);
+                        handleAddComment();
+                    }}>
+                    <Form.Group controlId="commentInput">
+                    <Form.Control type="text" placeholder="Add a comment" value={comment} onChange={e => setComment(e.target.value)} />
+                    </Form.Group>
+                    <Button variant="primary" type="submit" className="my-2">Add Comment</Button>
                 </Form>
-              </div>
+                )}
+</div>
             </Collapse>
           </Card.Body>
         </Card>
       ))}
-
       {/* Add Movie Modal */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add Movie</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group>
+          <Form onSubmit={(e) => {
+            e.preventDefault();
+            handleAddMovie();
+          }}>
+            <Form.Group controlId="title">
               <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+              <Form.Control type="text" value={title} onChange={e => setTitle(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="director">
               <Form.Label>Director</Form.Label>
-              <Form.Control
-                type="text"
-                value={director}
-                onChange={(e) => setDirector(e.target.value)}
-              />
+              <Form.Control type="text" value={director} onChange={e => setDirector(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="year">
               <Form.Label>Year</Form.Label>
-              <Form.Control
-                type="text"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
+              <Form.Control type="number" value={year} onChange={e => setYear(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="description">
               <Form.Label>Description</Form.Label>
-              <Form.Control
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <Form.Control as="textarea" rows={3} value={description} onChange={e => setDescription(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="genre">
               <Form.Label>Genre</Form.Label>
-              <Form.Control
-                type="text"
-                value={genre}
-                onChange={(e) => setGenre(e.target.value)}
-              />
+              <Form.Control type="text" value={genre} onChange={e => setGenre(e.target.value)} required />
             </Form.Group>
+            <Button variant="primary" type="submit" className="my-2">Add Movie</Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAddModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleAddMovie}>
-            Add Movie
-          </Button>
-        </Modal.Footer>
       </Modal>
 
       {/* Update Movie Modal */}
@@ -464,75 +437,47 @@ const MovieList = () => {
           <Modal.Title>Update Movie</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group>
+          <Form onSubmit={(e) => {
+            e.preventDefault();
+            handleUpdateMovie();
+          }}>
+            <Form.Group controlId="title">
               <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+              <Form.Control type="text" value={title} onChange={e => setTitle(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="director">
               <Form.Label>Director</Form.Label>
-              <Form.Control
-                type="text"
-                value={director}
-                onChange={(e) => setDirector(e.target.value)}
-              />
+              <Form.Control type="text" value={director} onChange={e => setDirector(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="year">
               <Form.Label>Year</Form.Label>
-              <Form.Control
-                type="text"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
+              <Form.Control type="number" value={year} onChange={e => setYear(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="description">
               <Form.Label>Description</Form.Label>
-              <Form.Control
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <Form.Control as="textarea" rows={3} value={description} onChange={e => setDescription(e.target.value)} required />
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="genre">
               <Form.Label>Genre</Form.Label>
-              <Form.Control
-                type="text"
-                value={genre}
-                onChange={(e) => setGenre(e.target.value)}
-              />
+              <Form.Control type="text" value={genre} onChange={e => setGenre(e.target.value)} required />
             </Form.Group>
+            <Button variant="primary" type="submit" className="my-2">Update Movie</Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleUpdateMovie}>
-            Update Movie
-          </Button>
-        </Modal.Footer>
       </Modal>
 
-      {/* Delete Movie Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+       {/* Delete Movie Modal */}
+       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Movie</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this movie?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDeleteMovie}>
-            Delete Movie
-          </Button>
-        </Modal.Footer>
+        <Modal.Body>
+          <p>Are you sure you want to delete this movie?</p>
+          <Button variant="danger" onClick={handleDeleteMovie}>Delete</Button>
+        </Modal.Body>
       </Modal>
     </Container>
+
   );
 };
 
