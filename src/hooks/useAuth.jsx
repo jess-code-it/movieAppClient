@@ -1,22 +1,40 @@
 import { useState, useEffect } from 'react';
+import jwtDecode from 'jwt-decode';
 
 export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchAuthStatus = async () => {
+        const validateToken = () => {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setIsAuthenticated(false);
+                setUser(null);
+                return;
+            }
+
             try {
-                const response = await fetch('/auth/status', { credentials: 'include' });
-                const data = await response.json();
-                setIsAuthenticated(data.isAuthenticated);
-                setUser(data.user);
+                const decodedToken = jwtDecode(token);
+                const currentTime = Date.now() / 1000;
+
+                // Check if the token is expired
+                if (decodedToken.exp < currentTime) {
+                    localStorage.removeItem('authToken');
+                    setIsAuthenticated(false);
+                    setUser(null);
+                } else {
+                    setIsAuthenticated(true);
+                    setUser(decodedToken.user); // Assuming the token payload has user data
+                }
             } catch (error) {
-                console.error('Error fetching authentication status:', error);
+                console.error('Invalid token:', error);
+                setIsAuthenticated(false);
+                setUser(null);
             }
         };
 
-        fetchAuthStatus();
+        validateToken();
     }, []);
 
     return { isAuthenticated, user };

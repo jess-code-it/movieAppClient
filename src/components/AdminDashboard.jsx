@@ -51,6 +51,7 @@ const AdminDashboard = () => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         if (data.result) {
           setMovies([...movies, data.newMovie]);
           setNewMovie({ title: '', director: '', year: '', description: '', genre: '' });
@@ -144,6 +145,7 @@ const AdminDashboard = () => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         if (data.comment) {
           setMovies(movies.map(movie => 
             movie._id === movieId 

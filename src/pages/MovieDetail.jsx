@@ -17,7 +17,6 @@ const MovieDetail = () => {
         return response.json();
       })
       .then(data => {
-        console.log(data);
         setMovie(data);
       })
       .catch(error => setError(error.message || 'Error fetching movie details'));
@@ -41,6 +40,7 @@ const MovieDetail = () => {
         return response.json();
       })
       .then(data => {
+        console.log(data);
         if (data.updatedMovie) {
           setMovie(data.updatedMovie);
           setComment('');
