@@ -25,32 +25,35 @@ const MovieDetail = () => {
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     fetch(`${import.meta.env.VITE_API_URL}/movies/addComment/${movieId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      },
-      body: JSON.stringify({ text: comment })
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ text: comment })
     })
-      .then(response => {
+    .then(async (response) => {
+        const responseData = await response.json();
         if (!response.ok) {
-          throw new Error('Error adding comment');
+            console.error('Error Response:', responseData);
+            throw new Error(responseData.message || 'Error adding comment');
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
+        return responseData;
+    })
+    .then(data => {
         if (data.updatedMovie) {
-          setMovie(data.updatedMovie);
-          setComment('');
+            setMovie(data.updatedMovie);
+            setComment('');
         } else {
-          console.log("Data:",data);
-          console.log("Error",data.error);
-          setError(data.message || 'Failed to add comment');
+            setError(data.message || 'Failed to add comment');
         }
-      })
-      .catch(error => setError(error.message || 'Error connecting to server'));
+    })
+    .catch(error => {
+        console.error('Catch Error:', error.message);
+        setError(error.message || 'Error connecting to server');
+    });
   };
+
 
   return (
     <Container>
