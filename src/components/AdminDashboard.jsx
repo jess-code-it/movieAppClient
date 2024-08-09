@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Form, ListGroup, Alert, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 const AdminDashboard = () => {
   const [movies, setMovies] = useState([]);
@@ -13,7 +12,6 @@ const AdminDashboard = () => {
   });
   const [editMovie, setEditMovie] = useState(null);
   const [error, setError] = useState(null);
-  const [newComment, setNewComment] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -23,10 +21,9 @@ const AdminDashboard = () => {
     fetch(`${import.meta.env.VITE_API_URL}/movies/getMovies`)
       .then(response => response.json())
       .then(data => {
-        // Ensure comments is an array for each movie
         const updatedMovies = data.movies.map(movie => ({
           ...movie,
-          comments: movie.comments || [] // Ensure comments is an array
+          comments: movie.comments || []
         }));
         setMovies(updatedMovies);
       })
@@ -134,32 +131,6 @@ const AdminDashboard = () => {
       .catch(error => setError('Error connecting to server'));
   };
 
-  const handleAddComment = (movieId) => {
-    fetch(`${import.meta.env.VITE_API_URL}/movies/addComment/${movieId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      },
-      body: JSON.stringify({ content: newComment })
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (Object.keys(data).length > 0) {
-          setMovies(movies.map(movie => 
-            movie._id === movieId 
-            ? { ...movie, comments: [...movie.comments, data.comment] }
-            : movie
-          ));
-          setNewComment('');
-        } else {
-          setError(data.message || 'Failed to add comment');
-        }
-      })
-      .catch(error => setError('Error connecting to server'));
-  };
-
   return (
     <Container>
       {error && <Alert variant="danger">{error}</Alert>}
@@ -237,7 +208,7 @@ const AdminDashboard = () => {
     movies.map(movie => (
       movie ? (
         <ListGroup.Item key={movie._id}>
-          <h5><Link to={`/movies/${movie._id}`}>{movie.title || 'No Title'}</Link></h5>
+          <h5>{movie.title || 'No Title'}</h5>
           <p><strong>Director:</strong> {movie.director || 'Unknown'}</p>
           <p><strong>Year:</strong> {movie.year || 'N/A'}</p>
           <p><strong>Description:</strong> {movie.description || 'No Description'}</p>
@@ -262,6 +233,18 @@ const AdminDashboard = () => {
           >
             Update
           </Button>
+          {/* Comments Section */}
+          <h4 className="mt-3">Comments</h4>
+          <ListGroup>
+            {(movie.comments || []).map(comment => (
+              comment ? (
+                <ListGroup.Item key={comment._id}>
+                  <p>{new Date(comment.createdAt).toLocaleString()}</p>
+                  <p>{comment.comment || 'No Content'}</p>
+                </ListGroup.Item>
+              ) : null
+            ))}
+          </ListGroup>
         </ListGroup.Item>
       ) : (
         <ListGroup.Item key={`placeholder-${Math.random()}`}>
