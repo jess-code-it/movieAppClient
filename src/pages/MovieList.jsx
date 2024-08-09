@@ -55,7 +55,7 @@ const MovieList = () => {
         setError('An error occurred while fetching movies.');
         console.error('Error fetching movies:', error);
       });
-  }, [navigate]);
+  });
 
   useEffect(() => {
     if (currentMovie && currentMovie._id) {
