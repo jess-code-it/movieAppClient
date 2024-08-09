@@ -1,24 +1,26 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MovieList from './pages/MovieList';
-import UserLogin from './pages/UserLogin';
-import UserRegister from './pages/UserRegister';
-import MovieDetail from './pages/MovieDetails'; // Import MovieDetail
-import { Container } from 'react-bootstrap';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import AdminPage from './pages/AdminPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import MovieDetail from './pages/MovieDetail';
+import { useAuth } from './hooks/useAuth';
 
-function App() {
-  return (
-    <Router>
-      <Container>
-        <Routes>
-          <Route path="/" element={<MovieList />} />
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/register" element={<UserRegister />} />
-          <Route path="/movies/getMovie/:movieId" element={<MovieDetail />} /> {/* Add this route */}
-        </Routes>
-      </Container>
-    </Router>
-  );
-}
+const App = () => {
+    const { isAuthenticated, user } = useAuth();
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/admin" element={isAuthenticated && user && user.isAdmin ? <AdminPage /> : <Navigate to="/" />} />
+                <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
+                <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
+                <Route path="/movies/:movieId" element={<MovieDetail />} />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;
