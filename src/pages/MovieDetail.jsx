@@ -41,7 +41,7 @@ const MovieDetail = () => {
         return responseData;
     })
     .then(data => {
-        if (data.updatedMovie) {
+        if (Object.keys(data).length > 0) {
             setMovie(data.updatedMovie);
             setComment('');
         } else {
