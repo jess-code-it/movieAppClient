@@ -30,7 +30,7 @@ const MovieDetail = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         },
-        body: JSON.stringify({ text: comment })
+        body: JSON.stringify({ comment: comment })
     })
     .then(async (response) => {
         const responseData = await response.json();

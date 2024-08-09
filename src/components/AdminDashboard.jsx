@@ -40,7 +40,6 @@ const AdminDashboard = () => {
   }, []);
 
   const handleAddMovie = (e) => {
-    e.preventDefault();
     fetch(`${import.meta.env.VITE_API_URL}/movies/addMovie`, {
       method: 'POST',
       headers: {
@@ -136,7 +135,7 @@ const AdminDashboard = () => {
 
   const handleAddComment = (movieId) => {
     fetch(`${import.meta.env.VITE_API_URL}/movies/addComment/${movieId}`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
