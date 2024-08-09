@@ -1,5 +1,5 @@
 {
-    "url": "https://movie-app-client-sandy.vercel.app",
+    "url": "https://movie-app-client-silk.vercel.app",
 "endpoints": {     
 "register": "/register",
 "login": "/login",    
