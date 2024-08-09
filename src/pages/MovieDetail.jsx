@@ -33,7 +33,6 @@ const MovieDetail = () => {
       body: JSON.stringify({ text: comment })
     })
       .then(response => {
-        console.log(response);
         if (!response.ok) {
           throw new Error('Error adding comment');
         }
